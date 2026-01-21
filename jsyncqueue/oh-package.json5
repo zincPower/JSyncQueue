@@ -1,0 +1,19 @@
+{
+  "name": "jsyncqueue",
+  "version": "1.0.0",
+  "description": "一个开箱即用的异步任务同步队列",
+  "main": "Index.ts",
+  "author": "江澎涌",
+  "license": "MIT",
+  "dependencies": {},
+  "keywords": [
+    "harmonyos",
+    "queue",
+    "sync queue",
+    "同步队列",
+    "await",
+    "async",
+  ],
+  "homepage": "https://github.com/zincPower",
+  "repository": "https://github.com/zincPower/JSyncQueue"
+}
