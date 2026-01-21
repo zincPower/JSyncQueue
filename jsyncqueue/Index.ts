@@ -1,1 +1,1 @@
-export { JSyncQueue, Message, Task, Any } from './src/main/ets/JSyncQueue'
+export { JSyncQueue, Message, Task, JSyncQueueCancelException, JSyncQueueException, Any } from './src/main/ets/JSyncQueue'

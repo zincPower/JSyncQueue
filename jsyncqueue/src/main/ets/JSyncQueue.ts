@@ -35,10 +35,16 @@ export interface Task {
   getTaskId(): number
 }
 
+/**
+ * 任务取消
+ */
 export interface JSyncQueueCancelException {
   message: string
 }
 
+/**
+ * JSyncQueue 异常
+ */
 export interface JSyncQueueException {
   message: string
 }
@@ -47,6 +53,7 @@ export interface JSyncQueueException {
  * 同步队列
  */
 export class JSyncQueue {
+  // 同步队列名称
   readonly queueName: string
   // 任务 Id 生成器
   private taskIdCreator = new IdCreator()
@@ -62,8 +69,8 @@ export class JSyncQueue {
   private delayPool = new DelayPool(this, this.taskIdCreator)
 
   /**
-   * 构造队列
-   * @param queueName 队列名称
+   * 构造同步队列
+   * @param queueName 同步队列名称
    */
   constructor(queueName: string) {
     this.queueName = queueName
@@ -116,8 +123,7 @@ export class JSyncQueue {
       this.pendingReplies.delete(id)
     })
     this.pendingReplies.forEach((item) => {
-      item.reject({ message: `Cancel task by clear function.` } as JSyncQueueCancelException
-      )
+      item.reject({ message: `Cancel task by clear function.` } as JSyncQueueCancelException)
     })
     this.delayPool.clear()
     this.queue = []
@@ -129,15 +135,8 @@ export class JSyncQueue {
    * 获取任务数量
    * @returns 任务数量
    */
-  get length() {
-    return this.queue.length
-  }
-
-  /**
-   * 打印同步队列的信息
-   */
-  dump() {
-    Log.i(TAG, `name=${this.queueName} isProcessing=${this.isProcessing} queue=${JSON.stringify(this.queue)} tasks=${this.tasks.size} pendingReplies=${this.pendingReplies.size}`)
+  get length(): number {
+    return this.queue.length + this.delayPool.length
   }
 
   /**
@@ -160,6 +159,14 @@ export class JSyncQueue {
    */
   async onHandleMessage(message: Message, taskId: number): Promise<Any> {
     return undefined
+  }
+
+  /**
+   * TODO 去除
+   * 打印同步队列的信息
+   */
+  dump() {
+    Log.i(TAG, `name=${this.queueName} isProcessing=${this.isProcessing} queue=${JSON.stringify(this.queue)} tasks=${this.tasks.size} pendingReplies=${this.pendingReplies.size}`)
   }
 
   /**
@@ -194,11 +201,10 @@ export class JSyncQueue {
    * 2、需要在处理完任务后，检测队列中是否还有任务需要处理
    */
   private async process() {
-    if (this.isProcessing || this.queue.length == 0) {
+    if (this.isProcessing || this.queue.length <= 0) {
       return
     }
     this.isProcessing = true
-
     // 循环处理完队列中的任务
     while (this.queue.length > 0) {
       // 获取任务队列的第一个进行执行
@@ -344,7 +350,9 @@ class DelayTask implements Task {
    * 3、如果已经执行，则进行队列取消
    */
   cancel() {
-    clearTimeout(this.timeId)
+    if (this.timeId != ERROR_TASK_ID) {
+      clearTimeout(this.timeId)
+    }
     this.promiseReply.reject({ message: `Cancel task by cancel function.` } as JSyncQueueCancelException)
     this.queue.deref()?.cancel(this.taskId)
   }
@@ -386,6 +394,14 @@ class DelayPool {
   }
 
   /**
+   * 获取延时任务数量
+   * @returns 延时任务数量
+   */
+  get length(): number {
+    return this.delayTasks.size
+  }
+
+  /**
    * 发送延时消息
    * @param message 延时消息
    * @param delay 延时时间，单位为毫秒
@@ -403,6 +419,16 @@ class DelayPool {
    */
   postDelay(runnable: Runnable, delay: number): Task {
     return this.addTask(undefined, runnable, delay)
+  }
+
+  /**
+   * 清理所有延时任务
+   */
+  clear() {
+    this.delayTasks.forEach((item) => {
+      item.cancel()
+    })
+    this.delayTasks.clear()
   }
 
   /**
@@ -433,7 +459,7 @@ class DelayPool {
     }
 
     const taskId = idCreator.obtain()
-    const timeId = setTimeout(async (taskId: number, message: Message | undefined, runnable: Runnable | undefined) => {
+    const timeId = setTimeout((taskId: number, message: Message | undefined, runnable: Runnable | undefined) => {
       const syncQueue = this.syncQueue.deref()
       if (syncQueue == undefined) {
         Log.e(TAG, `Sync queue is undefined.`)
@@ -452,14 +478,5 @@ class DelayPool {
     const delayTask = new DelayTask(taskId, timeId, this.syncQueue)
     this.delayTasks.set(taskId, delayTask)
     return delayTask
-  }
-
-  /**
-   * 清理所有延时任务
-   */
-  clear() {
-    this.delayTasks.forEach((item) => {
-      item.cancel()
-    })
   }
 }
