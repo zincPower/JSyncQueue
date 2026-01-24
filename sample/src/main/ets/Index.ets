@@ -1,4 +1,5 @@
 import { DelayComponent } from './DelayComponent'
+import { ExamplesComponent } from './ExamplesComponent'
 import { ImmediatelyComponent } from './ImmediatelyComponent'
 
 @Entry
@@ -9,6 +10,7 @@ struct Index {
       Column() {
         ImmediatelyComponent()
         DelayComponent()
+        ExamplesComponent()
       }
       .justifyContent(FlexAlign.Start)
     }
