@@ -5,12 +5,11 @@ import { ImmediatelyComponent } from './ImmediatelyComponent'
 @Component
 struct Index {
   build() {
-    RelativeContainer() {
+    Scroll() {
       Column() {
         ImmediatelyComponent()
         DelayComponent()
-      }.width(`100%`)
-      .height(`100%`)
+      }
       .justifyContent(FlexAlign.Start)
     }
     .height('100%')

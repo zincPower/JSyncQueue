@@ -86,7 +86,7 @@ export struct ImmediatelyComponent {
           .onClick(async () => {
             let task: Task | undefined
             for (let i = 0; i < 10; ++i) {
-              const pro = this.immediatelyJSyncQueue.post(async () => {
+              const tempTask = this.immediatelyJSyncQueue.post(async () => {
                 const delayTime1 = Math.round(Math.random() * 500)
                 Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
                 await this.delay(delayTime1)
@@ -100,7 +100,7 @@ export struct ImmediatelyComponent {
                 }
                 return `jiangpengyong-移除Runnable ${i}`
               })
-              pro.getResult().then((result) => {
+              tempTask.getResult().then((result) => {
                 Log.i(TAG, `【移除Runnable】执行成功 i=${i} result=${result}`)
               }).catch((e: Any) => {
                 Log.e(TAG, `【移除Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
@@ -108,7 +108,7 @@ export struct ImmediatelyComponent {
                 Log.i(TAG, `【移除Runnable】执行完成 i=${i}`)
               })
               if (i == 5) {
-                task = pro
+                task = tempTask
               }
             }
             Log.i(TAG, `【移除Runnable】取消任务 task=${JSON.stringify(task)}`)
@@ -183,7 +183,7 @@ export struct ImmediatelyComponent {
           .onClick(async () => {
             let task: Task | undefined
             for (let i = 0; i < 10; ++i) {
-              const pro = this.immediatelyQueue.post(async () => {
+              const tempTask = this.immediatelyQueue.post(async () => {
                 const delayTime1 = Math.round(Math.random() * 500)
                 Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
                 await this.delay(delayTime1)
@@ -197,7 +197,7 @@ export struct ImmediatelyComponent {
                 }
                 return `jiangpengyong-移除Runnable ${i}`
               })
-              pro.getResult().then((result) => {
+              tempTask.getResult().then((result) => {
                 Log.i(TAG, `【移除Runnable】执行成功 i=${i} result=${result}`)
               }).catch((e: Any) => {
                 Log.e(TAG, `【移除Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
@@ -205,7 +205,7 @@ export struct ImmediatelyComponent {
                 Log.i(TAG, `【移除Runnable】执行完成 i=${i}`)
               })
               if (i == 5) {
-                task = pro
+                task = tempTask
               }
             }
             Log.i(TAG, `【移除Runnable】取消任务 task=${JSON.stringify(task)}`)
@@ -235,11 +235,11 @@ export struct ImmediatelyComponent {
           .onClick(async () => {
             let task: Task | undefined
             for (let i = 0; i < 10; ++i) {
-              const pro = this.immediatelyQueue.sendMessage({
+              const tempTask = this.immediatelyQueue.sendMessage({
                 what: `remove_message`,
                 data: { name: 'jiang peng yong', age: 10 + i },
               })
-              pro.getResult().then((result) => {
+              tempTask.getResult().then((result) => {
                 Log.i(TAG, `【移除Message】执行成功 i=${i} result=${result}`)
               }).catch((e: Any) => {
                 Log.e(TAG, `【移除Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
@@ -247,7 +247,7 @@ export struct ImmediatelyComponent {
                 Log.i(TAG, `【移除Message】执行完成 i=${i}`)
               })
               if (i == 5) {
-                task = pro
+                task = tempTask
               }
             }
             Log.i(TAG, `【移除Message】取消任务 task=${JSON.stringify(task)}`)
@@ -276,19 +276,19 @@ export struct ImmediatelyComponent {
               } else {
                 task = this.immediatelyQueue.sendMessage({
                   what: `say_hello`,
-                  data: { name: '小朋友', age:  i },
+                  data: { name: '小朋友', age: i },
                 })
-                task.getResult()
-                  .then((result) => {
-                    Log.i(TAG, `【添加10个Message和Runnable】执行成功 i=${i} result=${result}`)
-                  })
-                  .catch((e: Error) => {
-                    Log.e(TAG, `【添加10个Message和Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
-                  })
-                  .finally(() => {
-                    Log.i(TAG, `【添加10个Message和Runnable】执行结束 i=${i}`)
-                  })
               }
+              task.getResult()
+                .then((result) => {
+                  Log.i(TAG, `【添加10个Message和Runnable】执行成功 i=${i} result=${result}`)
+                })
+                .catch((e: Error) => {
+                  Log.e(TAG, `【添加10个Message和Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                })
+                .finally(() => {
+                  Log.i(TAG, `【添加10个Message和Runnable】执行结束 i=${i}`)
+                })
             }
           }).margin(5)
 
