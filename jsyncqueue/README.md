@@ -364,6 +364,6 @@ csdn：https://blog.csdn.net/weixin_37625173
 
 ### 7-2、赞赏
 
-如果觉得 JHandler 对你有帮助或启发，请我喝杯水果茶吧 😄
+如果觉得 JSyncQueue 对你有帮助或启发，请我喝杯水果茶吧 😄
 
 ![](https://github.com/zincPower/JSyncQueue/blob/main/img/pay.jpg)
