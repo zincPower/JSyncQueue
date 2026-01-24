@@ -20,13 +20,31 @@ export struct ImmediatelyComponent {
         .margin(5)
 
       Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.Start }) {
-        Text(`直接使用 JSyncQueue`)
-          .width(`100%`)
-          .fontColor(Color.White)
-          .fontWeight(800)
-          .fontSize(20)
-          .textAlign(TextAlign.Center)
-          .margin(2.5)
+        RelativeContainer() {
+          Text(`直接使用JSyncQueue`)
+            .fontColor(Color.White)
+            .fontWeight(800)
+            .fontSize(20)
+            .textAlign(TextAlign.Center)
+            .margin(2.5)
+            .width(`100%`)
+            .alignRules({ center: { anchor: "__container__", align: VerticalAlign.Center } })
+
+          Button(`队列信息`)
+            .onClick(async () => {
+              Log.i(TAG, `【队列信息】${this.immediatelyJSyncQueue.dumpInfo()}`)
+            })
+            .padding({ left: 7.5, right: 7.5 })
+            .margin({ right: 2.5 })
+            .fontSize(12)
+            .height(30)
+            .backgroundColor("#5B8A72")
+            .alignRules({
+              center: { anchor: "__container__", align: VerticalAlign.Center },
+              right: { anchor: "__container__", align: HorizontalAlign.End },
+            })
+        }.width(`100%`)
+        .height(50)
 
         Text(`直接使用 JSyncQueue 则无法处理 Message 类型消息。因为 Message 类型消息需要在队列内部的 onHandleMessage 方法接受进行处理。`)
           .width(`100%`)
@@ -96,11 +114,6 @@ export struct ImmediatelyComponent {
             Log.i(TAG, `【移除Runnable】取消任务 task=${JSON.stringify(task)}`)
             task?.cancel()
           }).margin(5)
-
-        Button(`队列信息`)
-          .onClick(async () => {
-            Log.i(TAG, `【队列信息】${this.immediatelyJSyncQueue.dumpInfo()}`)
-          }).margin(5)
       }.backgroundColor(`#BADFDB`)
       .padding({
         left: 5,
@@ -111,13 +124,31 @@ export struct ImmediatelyComponent {
       .borderRadius({ topLeft: 5, topRight: 5 })
 
       Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.Start }) {
-        Text(`继承使用 JSyncQueue`)
-          .width(`100%`)
-          .fontColor(Color.White)
-          .fontWeight(800)
-          .fontSize(20)
-          .textAlign(TextAlign.Center)
-          .margin(2.5)
+        RelativeContainer() {
+          Text(`继承使用 JSyncQueue`)
+            .width(`100%`)
+            .fontColor(Color.White)
+            .fontWeight(800)
+            .fontSize(20)
+            .textAlign(TextAlign.Center)
+            .margin(2.5)
+            .alignRules({ center: { anchor: "__container__", align: VerticalAlign.Center } })
+
+          Button(`队列信息`)
+            .onClick(async () => {
+              Log.i(TAG, `【队列信息】${this.immediatelyQueue.dumpInfo()}`)
+            })
+            .padding({ left: 7.5, right: 7.5 })
+            .margin({ right: 2.5 })
+            .fontSize(12)
+            .backgroundColor("#8B4A4A")
+            .height(30)
+            .alignRules({
+              center: { anchor: "__container__", align: VerticalAlign.Center },
+              right: { anchor: "__container__", align: HorizontalAlign.End },
+            })
+        }.width(`100%`)
+        .height(50)
 
         Button(`添加10个Runnable`)
           .onClick(() => {
@@ -144,25 +175,6 @@ export struct ImmediatelyComponent {
                 })
                 .finally(() => {
                   Log.i(TAG, `【添加10个Runnable】执行结束 i=${i}`)
-                })
-            }
-          }).margin(5)
-
-        Button(`添加10个Message`)
-          .onClick(async () => {
-            for (let i = 0; i < 10; ++i) {
-              (this.immediatelyQueue.sendMessage({
-                what: `say_hello`,
-                data: { name: '江澎涌', age: 20 + i },
-              })).getResult()
-                .then((result) => {
-                  Log.i(TAG, `【添加10个Message】执行成功 i=${i} result=${result}`)
-                })
-                .catch((e: Error) => {
-                  Log.e(TAG, `【添加10个Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
-                })
-                .finally(() => {
-                  Log.i(TAG, `【添加10个Message】执行结束i=${i}`)
                 })
             }
           }).margin(5)
@@ -200,6 +212,25 @@ export struct ImmediatelyComponent {
             task?.cancel()
           }).margin(5)
 
+        Button(`添加10个Message`)
+          .onClick(async () => {
+            for (let i = 0; i < 10; ++i) {
+              (this.immediatelyQueue.sendMessage({
+                what: `say_hello`,
+                data: { name: '江澎涌', age: 20 + i },
+              })).getResult()
+                .then((result) => {
+                  Log.i(TAG, `【添加10个Message】执行成功 i=${i} result=${result}`)
+                })
+                .catch((e: Error) => {
+                  Log.e(TAG, `【添加10个Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                })
+                .finally(() => {
+                  Log.i(TAG, `【添加10个Message】执行结束i=${i}`)
+                })
+            }
+          }).margin(5)
+
         Button(`移除Message`)
           .onClick(async () => {
             let task: Task | undefined
@@ -223,10 +254,44 @@ export struct ImmediatelyComponent {
             task?.cancel()
           }).margin(5)
 
-        Button(`队列信息`)
+        Button(`添加10个Message和Runnable`)
           .onClick(async () => {
-            Log.i(TAG, `【队列信息】${this.immediatelyQueue.dumpInfo()}`)
+            for (let i = 0; i < 20; ++i) {
+              let task: Task
+              if (i % 2 == 0) {
+                task = this.immediatelyQueue.post(async () => {
+                  const delayTime1 = Math.round(Math.random() * 500)
+                  Log.i(TAG, `【添加10个Message和Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                  await this.delay(delayTime1)
+
+                  const delayTime2 = Math.round(Math.random() * 500)
+                  Log.i(TAG, `【添加10个Message和Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                  await this.delay(delayTime2)
+
+                  if (i == 5) {
+                    throw { message: "模拟异常" } as Error
+                  }
+                  return `jiangpengyong-添加10个Message和Runnable ${i}`
+                })
+              } else {
+                task = this.immediatelyQueue.sendMessage({
+                  what: `say_hello`,
+                  data: { name: '小朋友', age:  i },
+                })
+                task.getResult()
+                  .then((result) => {
+                    Log.i(TAG, `【添加10个Message和Runnable】执行成功 i=${i} result=${result}`)
+                  })
+                  .catch((e: Error) => {
+                    Log.e(TAG, `【添加10个Message和Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                  })
+                  .finally(() => {
+                    Log.i(TAG, `【添加10个Message和Runnable】执行结束 i=${i}`)
+                  })
+              }
+            }
           }).margin(5)
+
       }.backgroundColor(`#FFBDBD`)
       .padding({
         left: 5,
