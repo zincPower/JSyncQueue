@@ -14,7 +14,7 @@ JSyncQueue 提供了一个简洁的解决方案：
 - **双模式支持**：支持 "立即执行" 和 "延时执行"，满足不同场景需求
 - **双任务模式**：支持 "Message 消息模式" 和 "Runnable 闭包模式"
 - **任务取消和管理**：可随时取消指定任务或清空整个队列
-- **Promise 集成**：通过 `getResult()` 获取任务执行结果，支持 `then/catch/finally`
+- **任务结果**：通过 `getResult()` 获取任务执行结果，支持 `then/catch/finally`
 - **可继承扩展**：通过继承 JSyncQueue 并重写 `onHandleMessage` 方法，实现自定义消息处理逻辑
 
 项目架构如下图所示：
