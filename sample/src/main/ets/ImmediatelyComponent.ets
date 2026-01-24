@@ -6,7 +6,8 @@ const TAG = "ImmediatelyComponent"
 
 @ComponentV2
 export struct ImmediatelyComponent {
-  private queue: JSyncQueue = new ImmediatelyQueue("ImmediatelyQueue")
+  private immediatelyQueue: JSyncQueue = new ImmediatelyQueue("ImmediatelyQueue")
+  private immediatelyJSyncQueue: JSyncQueue = new JSyncQueue("ImmediatelyJSyncQueue")
 
   build() {
     Column() {
@@ -19,116 +20,212 @@ export struct ImmediatelyComponent {
         .margin(5)
 
       Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.Start }) {
-        Button(`同步添加多个任务`)
-          .onClick(async () => {
-            for (let i = 0; i < 10; ++i) {
-              try {
-                const result = await (this.queue.post(async () => {
-                  Log.i(TAG, `【post runnable 1】i=${i}`)
-                  return `jiangpengyong 1 ${i}`
-                })).getResult()
-                Log.i(TAG, `【post runnable 1】result=${result}`)
-              } catch (e) {
-                Log.e(TAG, `【post runnable 1】e=${e}`)
-              }
-            }
-          }).margin(5)
+        Text(`直接使用 JSyncQueue`)
+          .width(`100%`)
+          .fontColor(Color.White)
+          .fontWeight(800)
+          .fontSize(20)
+          .textAlign(TextAlign.Center)
+          .margin(2.5)
 
-        Button(`一次性添加多个任务`)
-          .onClick(async () => {
+        Text(`直接使用 JSyncQueue 则无法处理 Message 类型消息。因为 Message 类型消息需要在队列内部的 onHandleMessage 方法接受进行处理。`)
+          .width(`100%`)
+          .fontColor("#3D6B6B")
+          .fontSize(12)
+          .textAlign(TextAlign.Start)
+          .margin(2.5)
+
+        Button(`添加10个Runnable`)
+          .onClick(() => {
             for (let i = 0; i < 10; ++i) {
-              this.queue.post(async () => {
-                Log.i(TAG, `【post runnable 2】i=${i}`)
-                await this.delay(1_000 - i * 10)
-                return `jiangpengyong 2 ${i}`
-              })
-                .getResult()
+              (this.immediatelyJSyncQueue.post(async () => {
+                const delayTime1 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                await this.delay(delayTime1)
+
+                const delayTime2 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                await this.delay(delayTime2)
+
+                if (i == 5) {
+                  throw { message: "模拟异常" } as Error
+                }
+                return `jiangpengyong-添加10个Runnable ${i}`
+              })).getResult()
                 .then((result) => {
-                  Log.i(TAG, `【post runnable 2】result=${result}`)
+                  Log.i(TAG, `【添加10个Runnable】执行成功 i=${i} result=${result}`)
                 })
-                .catch((e: Any) => {
-                  Log.e(TAG, `【post runnable 2】error=${e}`)
+                .catch((e: Error) => {
+                  Log.e(TAG, `【添加10个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
                 })
-            }
-          }).margin(5)
-
-        Button(`同步添加多个信息`)
-          .onClick(async () => {
-            for (let i = 0; i < 10; ++i) {
-              try {
-                const result = await (this.queue.sendMessage({
-                  what: `jiang`,
-                  data: { name: 'jiang peng yong 3', age: 20 + i },
-                }).getResult())
-                Log.i(TAG, `【send message 3】result=${result}`)
-              } catch (e) {
-                Log.e(TAG, `【send message 3】e=${e}`)
-              }
-            }
-          }).margin(5)
-
-        Button(`一次性添加多个信息`)
-          .onClick(async () => {
-            for (let i = 0; i < 10; ++i) {
-              this.queue.sendMessage({
-                what: `jiang`,
-                data: { name: 'jiang peng yong 4', age: 20 + i },
-              })
-                .getResult()
-                .then((result) => {
-                  Log.i(TAG, `【send message 4】result=${result}`)
-                })
-                .catch((e: Any) => {
-                  Log.e(TAG, `【send message 4】e=${e}`)
+                .finally(() => {
+                  Log.i(TAG, `【添加10个Runnable】执行结束 i=${i}`)
                 })
             }
           }).margin(5)
 
-        Button(`移除任务`)
+        Button(`移除Runnable`)
           .onClick(async () => {
             let task: Task | undefined
             for (let i = 0; i < 10; ++i) {
-              const pro = this.queue.post(async () => {
-                Log.i(TAG, `post runnable 5 i=${i}`)
-                return `jiang peng yong 5 i=${i}`
+              const pro = this.immediatelyJSyncQueue.post(async () => {
+                const delayTime1 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                await this.delay(delayTime1)
+
+                const delayTime2 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                await this.delay(delayTime2)
+
+                if (i == 3) {
+                  throw { message: "模拟异常" } as Error
+                }
+                return `jiangpengyong-移除Runnable ${i}`
               })
               pro.getResult().then((result) => {
-                Log.i(TAG, `【post runnable 5】result=${result}`)
+                Log.i(TAG, `【移除Runnable】执行成功 i=${i} result=${result}`)
               }).catch((e: Any) => {
-                Log.e(TAG, `【post runnable 5】e=${e}`)
+                Log.e(TAG, `【移除Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+              }).finally(() => {
+                Log.i(TAG, `【移除Runnable】执行完成 i=${i}`)
               })
               if (i == 5) {
                 task = pro
               }
             }
-            Log.i(TAG, `进行取消 task=${JSON.stringify(task)}`)
+            Log.i(TAG, `【移除Runnable】取消任务 task=${JSON.stringify(task)}`)
             task?.cancel()
           }).margin(5)
 
-        Button(`移除信息`)
+        Button(`队列信息`)
+          .onClick(async () => {
+            Log.i(TAG, `【队列信息】${this.immediatelyJSyncQueue.dumpInfo()}`)
+          }).margin(5)
+      }.backgroundColor(`#BADFDB`)
+      .padding({
+        left: 5,
+        top: 10,
+        right: 5,
+        bottom: 10,
+      })
+      .borderRadius({ topLeft: 5, topRight: 5 })
+
+      Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.Start }) {
+        Text(`继承使用 JSyncQueue`)
+          .width(`100%`)
+          .fontColor(Color.White)
+          .fontWeight(800)
+          .fontSize(20)
+          .textAlign(TextAlign.Center)
+          .margin(2.5)
+
+        Button(`添加10个Runnable`)
+          .onClick(() => {
+            for (let i = 0; i < 10; ++i) {
+              (this.immediatelyQueue.post(async () => {
+                const delayTime1 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                await this.delay(delayTime1)
+
+                const delayTime2 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                await this.delay(delayTime2)
+
+                if (i == 5) {
+                  throw { message: "模拟异常" } as Error
+                }
+                return `jiangpengyong-添加10个Runnable ${i}`
+              })).getResult()
+                .then((result) => {
+                  Log.i(TAG, `【添加10个Runnable】执行成功 i=${i} result=${result}`)
+                })
+                .catch((e: Error) => {
+                  Log.e(TAG, `【添加10个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                })
+                .finally(() => {
+                  Log.i(TAG, `【添加10个Runnable】执行结束 i=${i}`)
+                })
+            }
+          }).margin(5)
+
+        Button(`添加10个Message`)
+          .onClick(async () => {
+            for (let i = 0; i < 10; ++i) {
+              (this.immediatelyQueue.sendMessage({
+                what: `say_hello`,
+                data: { name: '江澎涌', age: 20 + i },
+              })).getResult()
+                .then((result) => {
+                  Log.i(TAG, `【添加10个Message】执行成功 i=${i} result=${result}`)
+                })
+                .catch((e: Error) => {
+                  Log.e(TAG, `【添加10个Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                })
+                .finally(() => {
+                  Log.i(TAG, `【添加10个Message】执行结束i=${i}`)
+                })
+            }
+          }).margin(5)
+
+        Button(`移除Runnable`)
           .onClick(async () => {
             let task: Task | undefined
             for (let i = 0; i < 10; ++i) {
-              const pro = this.queue.sendMessage({
-                what: `jiang`,
-                data: { name: 'jiang peng yong 6', age: 20 + i },
+              const pro = this.immediatelyQueue.post(async () => {
+                const delayTime1 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                await this.delay(delayTime1)
+
+                const delayTime2 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                await this.delay(delayTime2)
+
+                if (i == 3) {
+                  throw { message: "模拟异常" } as Error
+                }
+                return `jiangpengyong-移除Runnable ${i}`
               })
               pro.getResult().then((result) => {
-                Log.i(TAG, `【send message 6】result=${result}`)
+                Log.i(TAG, `【移除Runnable】执行成功 i=${i} result=${result}`)
               }).catch((e: Any) => {
-                Log.e(TAG, `【send message 6】e=${e}`)
+                Log.e(TAG, `【移除Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+              }).finally(() => {
+                Log.i(TAG, `【移除Runnable】执行完成 i=${i}`)
               })
               if (i == 5) {
                 task = pro
               }
             }
-            Log.i(TAG, `进行取消 task=${JSON.stringify(task)}`)
+            Log.i(TAG, `【移除Runnable】取消任务 task=${JSON.stringify(task)}`)
             task?.cancel()
           }).margin(5)
 
-        Button(`打印内部状态`)
+        Button(`移除Message`)
           .onClick(async () => {
-            this.queue.dump()
+            let task: Task | undefined
+            for (let i = 0; i < 10; ++i) {
+              const pro = this.immediatelyQueue.sendMessage({
+                what: `remove_message`,
+                data: { name: 'jiang peng yong', age: 10 + i },
+              })
+              pro.getResult().then((result) => {
+                Log.i(TAG, `【移除Message】执行成功 i=${i} result=${result}`)
+              }).catch((e: Any) => {
+                Log.e(TAG, `【移除Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
+              }).finally(() => {
+                Log.i(TAG, `【移除Message】执行完成 i=${i}`)
+              })
+              if (i == 5) {
+                task = pro
+              }
+            }
+            Log.i(TAG, `【移除Message】取消任务 task=${JSON.stringify(task)}`)
+            task?.cancel()
+          }).margin(5)
+
+        Button(`队列信息`)
+          .onClick(async () => {
+            Log.i(TAG, `【队列信息】${this.immediatelyQueue.dumpInfo()}`)
           }).margin(5)
       }.backgroundColor(`#FFBDBD`)
       .padding({
@@ -137,7 +234,7 @@ export struct ImmediatelyComponent {
         right: 5,
         bottom: 10,
       })
-      .borderRadius(5)
+      .borderRadius({ bottomLeft: 5, bottomRight: 5 })
     }.padding(5)
   }
 

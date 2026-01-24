@@ -2,7 +2,7 @@ import hilog from '@ohos.hilog'
 
 class Logger {
   private domain = 0x1001
-  isDebug = false
+  isDebug = true
 
   d(tag: string, message: string): void {
     if (this.isDebug) {

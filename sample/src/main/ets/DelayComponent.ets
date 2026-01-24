@@ -141,9 +141,9 @@ export struct DelayComponent {
             task?.cancel()
           }).margin(5)
 
-        Button(`打印内部状态`)
+        Button(`队列信息`)
           .onClick(async () => {
-            this.queue.dump()
+            Log.i(TAG, `【队列信息】${this.queue.dumpInfo()}`)
           }).margin(5)
       }.backgroundColor(`#BADFDB`)
       .padding({

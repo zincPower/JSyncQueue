@@ -1,4 +1,5 @@
 import { Log } from "./Log"
+import { JSON } from "@kit.ArkTS"
 
 const TAG = "JSyncQueue"
 
@@ -162,11 +163,10 @@ export class JSyncQueue {
   }
 
   /**
-   * TODO 去除
    * 打印同步队列的信息
    */
-  dump() {
-    Log.i(TAG, `name=${this.queueName} isProcessing=${this.isProcessing} queue=${JSON.stringify(this.queue)} tasks=${this.tasks.size} pendingReplies=${this.pendingReplies.size}`)
+  dumpInfo(): string {
+    return `queueName=${this.queueName} isProcessing=${this.isProcessing} queue=${JSON.stringify(this.queue)} queue.length=${this.queue.length} tasks.size=${this.tasks.size} pendingReplies.size=${this.pendingReplies.size} delayPool.size=${this.delayPool.length}`
   }
 
   /**
@@ -234,8 +234,8 @@ export class JSyncQueue {
         }
         reply.resolve(result)
       } catch (error) {
-        Log.e(TAG, `process failure. e=${error}`)
-        reply.reject({ message: `process failure. e=${error}` } as JSyncQueueException)
+        Log.e(TAG, `process failure. e=${JSON.stringify(error)}`)
+        reply.reject(error)
       }
     }
     this.isProcessing = false

@@ -15,7 +15,7 @@
     "abilities": [
       {
         "name": "SampleAbility",
-        "srcEntry": "./ets/sampleability/SampleAbility.ets",
+        "srcEntry": "./ets/SampleAbility.ets",
         "description": "$string:SampleAbility_desc",
         "icon": "$media:app_icon",
         "label": "$string:app_name",
@@ -35,18 +35,6 @@
       }
     ],
     "extensionAbilities": [
-      {
-        "name": "SampleBackupAbility",
-        "srcEntry": "./ets/samplebackupability/SampleBackupAbility.ets",
-        "type": "backup",
-        "exported": false,
-        "metadata": [
-          {
-            "name": "ohos.extension.backup",
-            "resource": "$profile:backup_config"
-          }
-        ],
-      }
     ]
   }
 }
