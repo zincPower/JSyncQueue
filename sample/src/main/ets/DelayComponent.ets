@@ -54,36 +54,36 @@ export struct DelayComponent {
           .textAlign(TextAlign.Start)
           .margin(2.5)
 
-        Button(`添加10个Runnable`)
+        Button(`添加5个Runnable`)
           .onClick(() => {
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const startTime = systemDateTime.getTime(false)
               const delayTime = i * 100
-              this.delayJSyncQueue.postDelay(async () => {
+              const task = this.delayJSyncQueue.postDelay(async () => {
                 const endTime = systemDateTime.getTime(false)
                 const realDelay = endTime - startTime
                 const delayTime1 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 delay=${delayTime} realDelay=${realDelay} i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 delay=${delayTime} realDelay=${realDelay} i=${i} 第一段 将会模拟耗时=${delayTime1}`)
                 await this.delay(delayTime1)
 
                 const delayTime2 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
                 await this.delay(delayTime2)
 
-                if (i == 5) {
+                if (i == 3) {
                   throw { message: "模拟异常" } as Error
                 }
-                return `jiangpengyong-添加10个Runnable ${i}`
+                return `jiangpengyong-添加5个Runnable ${i}`
               }, delayTime)
-                .getResult()
+              task.getResult()
                 .then((result) => {
-                  Log.i(TAG, `【添加10个Runnable】执行成功 i=${i} result=${result}`)
+                  Log.i(TAG, `【添加5个Runnable】执行成功 i=${i} result=${result}`)
                 })
                 .catch((e: Error) => {
-                  Log.e(TAG, `【添加10个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                  Log.e(TAG, `【添加5个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
                 })
                 .finally(() => {
-                  Log.i(TAG, `【添加10个Runnable】执行结束 i=${i}`)
+                  Log.i(TAG, `【添加5个Runnable】执行结束 i=${i}`)
                 })
             }
           }).margin(5)
@@ -91,7 +91,7 @@ export struct DelayComponent {
         Button(`移除Runnable`)
           .onClick(async () => {
             let task: Task | undefined
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const startTime = systemDateTime.getTime(false)
               const delayTime = i * 100
               const tempTask = this.delayJSyncQueue.postDelay(async () => {
@@ -105,7 +105,7 @@ export struct DelayComponent {
                 Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
                 await this.delay(delayTime2)
 
-                if (i == 3) {
+                if (i == 2) {
                   throw { message: "模拟异常" } as Error
                 }
                 return `jiangpengyong-移除Runnable ${i}`
@@ -117,7 +117,7 @@ export struct DelayComponent {
               }).finally(() => {
                 Log.i(TAG, `【移除Runnable】执行完成 i=${i}`)
               })
-              if (i == 5) {
+              if (i == 1) {
                 task = tempTask
               }
             }
@@ -161,36 +161,36 @@ export struct DelayComponent {
         }.width(`100%`)
         .height(50)
 
-        Button(`添加10个Runnable`)
+        Button(`添加5个Runnable`)
           .onClick(async () => {
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const startTime = systemDateTime.getTime(false)
               const delayTime = i * 100
-              this.delayQueue.postDelay(async () => {
+              const task = this.delayQueue.postDelay(async () => {
                 const endTime = systemDateTime.getTime(false)
                 const realDelay = endTime - startTime
                 const delayTime1 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 delay=${delayTime} realDelay=${realDelay} i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 delay=${delayTime} realDelay=${realDelay} i=${i} 第一段 将会模拟耗时=${delayTime1}`)
                 await this.delay(delayTime1)
 
                 const delayTime2 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
                 await this.delay(delayTime2)
 
-                if (i == 5) {
+                if (i == 3) {
                   throw { message: "模拟异常" } as Error
                 }
-                return `jiangpengyong-添加10个Runnable ${i}`
+                return `jiangpengyong-添加5个Runnable ${i}`
               }, delayTime)
-                .getResult()
+              task.getResult()
                 .then((result) => {
-                  Log.i(TAG, `【添加10个Runnable】执行成功 i=${i} result=${result}`)
+                  Log.i(TAG, `【添加5个Runnable】执行成功 i=${i} result=${result}`)
                 })
                 .catch((e: Error) => {
-                  Log.e(TAG, `【添加10个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                  Log.e(TAG, `【添加5个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
                 })
                 .finally(() => {
-                  Log.i(TAG, `【添加10个Runnable】执行结束 i=${i}`)
+                  Log.i(TAG, `【添加5个Runnable】执行结束 i=${i}`)
                 })
             }
           }).margin(5)
@@ -198,7 +198,7 @@ export struct DelayComponent {
         Button(`移除Runnable`)
           .onClick(async () => {
             let task: Task | undefined
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const startTime = systemDateTime.getTime(false)
               const delayTime = i * 100
               const tempTask = this.delayQueue.postDelay(async () => {
@@ -224,7 +224,7 @@ export struct DelayComponent {
               }).finally(() => {
                 Log.i(TAG, `【移除Runnable】执行完成 i=${i}`)
               })
-              if (i == 5) {
+              if (i == 2) {
                 task = tempTask
               }
             }
@@ -232,9 +232,9 @@ export struct DelayComponent {
             task?.cancel()
           }).margin(5)
 
-        Button(`添加10个Message`)
+        Button(`添加5个Message`)
           .onClick(async () => {
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const delayTime = i * 100
               const task = this.delayQueue.sendMessageDelay({
                 what: `say_hello`,
@@ -242,13 +242,13 @@ export struct DelayComponent {
               }, delayTime)
               task.getResult()
                 .then((result) => {
-                  Log.i(TAG, `【添加10个Message】执行成功 i=${i} result=${result}`)
+                  Log.i(TAG, `【添加5个Message】执行成功 i=${i} result=${result}`)
                 })
                 .catch((e: Error) => {
-                  Log.e(TAG, `【添加10个Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                  Log.e(TAG, `【添加5个Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
                 })
                 .finally(() => {
-                  Log.i(TAG, `【添加10个Message】执行结束i=${i}`)
+                  Log.i(TAG, `【添加5个Message】执行结束i=${i}`)
                 })
             }
           }).margin(5)
@@ -256,7 +256,7 @@ export struct DelayComponent {
         Button(`移除Message`)
           .onClick(async () => {
             let task: Task | undefined
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const delayTime = i * 100
               const tempTask = this.delayQueue.sendMessageDelay({
                 what: `remove_message`,
@@ -269,7 +269,7 @@ export struct DelayComponent {
               }).finally(() => {
                 Log.i(TAG, `【移除Message】执行完成 i=${i}`)
               })
-              if (i == 5) {
+              if (i == 2) {
                 task = tempTask
               }
             }
@@ -279,7 +279,7 @@ export struct DelayComponent {
 
         Button(`添加10个Message和Runnable`)
           .onClick(async () => {
-            for (let i = 0; i < 20; ++i) {
+            for (let i = 0; i < 10; ++i) {
               let task: Task
               const delayTime = i * 100
               if (i % 2 == 0) {
@@ -292,7 +292,7 @@ export struct DelayComponent {
                   Log.i(TAG, `【添加10个Message和Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
                   await this.delay(delayTime2)
 
-                  if (i == 5) {
+                  if (i / 2 == 3) {
                     throw { message: "模拟异常" } as Error
                   }
                   return `jiangpengyong-添加10个Message和Runnable ${i}`
@@ -314,6 +314,35 @@ export struct DelayComponent {
                   Log.i(TAG, `【添加10个Message和Runnable】执行结束 i=${i}`)
                 })
             }
+          }).margin(5)
+
+        Button(`清空队列`)
+          .onClick(async () => {
+            for (let i = 0; i < 5; ++i) {
+              const delayTime = i * 100
+              const task = this.delayQueue.postDelay(async () => {
+                const delayTime1 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【清空队列】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                await this.delay(delayTime1)
+
+                const delayTime2 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【清空队列】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                await this.delay(delayTime2)
+
+                return `小朋友-清空队列 ${i}`
+              }, delayTime)
+              task.getResult()
+                .then((result) => {
+                  Log.i(TAG, `【清空队列】执行成功 i=${i} result=${result}`)
+                })
+                .catch((e: Error) => {
+                  Log.e(TAG, `【清空队列】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                })
+                .finally(() => {
+                  Log.i(TAG, `【清空队列】执行结束 i=${i}`)
+                })
+            }
+            this.delayQueue.clear()
           }).margin(5)
 
       }.backgroundColor(`#FFBDBD`)

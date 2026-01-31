@@ -19,7 +19,7 @@ export class ImmediatelyQueue extends JSyncQueue {
         Log.i("ImmediatelyQueue", `【say_hello】执行逻辑 第二段 将会模拟耗时=${delayTime2}`)
         await this.delay(delayTime2)
 
-        if (this.count % 10 == 5) {
+        if (this.count % 10 == 3) {
           throw { message: "模拟异常" }
         }
         return `你好，${name}。这是第${this.count}次打招呼。`
@@ -36,7 +36,7 @@ export class ImmediatelyQueue extends JSyncQueue {
         Log.i("ImmediatelyQueue", `【remove_message】执行逻辑 第二段 将会模拟耗时=${delayTime2}`)
         await this.delay(delayTime2)
 
-        if (this.count % 10 == 5) {
+        if (this.count % 10 == 3) {
           throw { message: "模拟异常" }
         }
         return `你好，${name}。这是第${this.count}次打招呼。`
@@ -96,37 +96,5 @@ export class DelayQueue extends JSyncQueue {
 
   private async delay(ms: number) {
     return new Promise<Any>(resolve => setTimeout(resolve, ms))
-  }
-}
-
-export class UserQueue extends JSyncQueue {
-  private userCount = 0
-
-  async onHandleMessage(message: Message): Promise<Any> {
-    switch (message.what) {
-      case "register": {
-        this.userCount++
-        const name = message.data["name"]
-        await this.delay(100)
-        return `用户 ${name} 注册成功，当前用户数: ${this.userCount}`
-      }
-      case "login": {
-        const username = message.data["username"]
-        await this.delay(100)
-        return `用户 ${username} 登录成功`
-      }
-    }
-    return undefined
-  }
-
-  private async delay(ms: number) {
-    return new Promise<Any>(resolve => setTimeout(resolve, ms))
-  }
-}
-
-export class MixedQueue extends JSyncQueue {
-  async onHandleMessage(message: Message): Promise<Any> {
-    Log.i("MixedQueue", `处理消息: ${message.what}`)
-    return `消息 ${message.what} 处理完成`
   }
 }

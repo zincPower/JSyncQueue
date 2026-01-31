@@ -6,7 +6,8 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "jsyncqueue": "file:../jsyncqueue"
+    //    "jsyncqueue": "file:../jsyncqueue",
+    "jsyncqueue": "1.0.0"
   }
 }
 

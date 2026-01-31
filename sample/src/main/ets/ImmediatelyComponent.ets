@@ -53,31 +53,33 @@ export struct ImmediatelyComponent {
           .textAlign(TextAlign.Start)
           .margin(2.5)
 
-        Button(`添加10个Runnable`)
+        Button(`添加5个Runnable`)
           .onClick(() => {
-            for (let i = 0; i < 10; ++i) {
-              (this.immediatelyJSyncQueue.post(async () => {
+            for (let i = 0; i < 5; ++i) {
+              const task = this.immediatelyJSyncQueue.post(async () => {
                 const delayTime1 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
                 await this.delay(delayTime1)
 
-                const delayTime2 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
-                await this.delay(delayTime2)
-
-                if (i == 5) {
+                if (i == 3) {
                   throw { message: "模拟异常" } as Error
                 }
-                return `jiangpengyong-添加10个Runnable ${i}`
-              })).getResult()
+
+                const delayTime2 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                await this.delay(delayTime2)
+
+                return `jiangpengyong-添加5个Runnable ${i}`
+              })
+              task.getResult()
                 .then((result) => {
-                  Log.i(TAG, `【添加10个Runnable】执行成功 i=${i} result=${result}`)
+                  Log.i(TAG, `【添加5个Runnable-执行成功】i=${i} result=${result}`)
                 })
                 .catch((e: Error) => {
-                  Log.e(TAG, `【添加10个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                  Log.e(TAG, `【添加5个Runnable-执行异常】i=${i} e=${JSON.stringify(e)}`)
                 })
                 .finally(() => {
-                  Log.i(TAG, `【添加10个Runnable】执行结束 i=${i}`)
+                  Log.i(TAG, `【添加5个Runnable-执行结束】i=${i}`)
                 })
             }
           }).margin(5)
@@ -85,7 +87,7 @@ export struct ImmediatelyComponent {
         Button(`移除Runnable`)
           .onClick(async () => {
             let task: Task | undefined
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const tempTask = this.immediatelyJSyncQueue.post(async () => {
                 const delayTime1 = Math.round(Math.random() * 500)
                 Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
@@ -95,7 +97,7 @@ export struct ImmediatelyComponent {
                 Log.i(TAG, `【移除Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
                 await this.delay(delayTime2)
 
-                if (i == 3) {
+                if (i == 2) {
                   throw { message: "模拟异常" } as Error
                 }
                 return `jiangpengyong-移除Runnable ${i}`
@@ -107,7 +109,7 @@ export struct ImmediatelyComponent {
               }).finally(() => {
                 Log.i(TAG, `【移除Runnable】执行完成 i=${i}`)
               })
-              if (i == 5) {
+              if (i == 3) {
                 task = tempTask
               }
             }
@@ -150,31 +152,31 @@ export struct ImmediatelyComponent {
         }.width(`100%`)
         .height(50)
 
-        Button(`添加10个Runnable`)
+        Button(`添加5个Runnable`)
           .onClick(() => {
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               (this.immediatelyQueue.post(async () => {
                 const delayTime1 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
                 await this.delay(delayTime1)
 
                 const delayTime2 = Math.round(Math.random() * 500)
-                Log.i(TAG, `【添加10个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                Log.i(TAG, `【添加5个Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
                 await this.delay(delayTime2)
 
-                if (i == 5) {
+                if (i == 2) {
                   throw { message: "模拟异常" } as Error
                 }
-                return `jiangpengyong-添加10个Runnable ${i}`
+                return `jiangpengyong-添加5个Runnable ${i}`
               })).getResult()
                 .then((result) => {
-                  Log.i(TAG, `【添加10个Runnable】执行成功 i=${i} result=${result}`)
+                  Log.i(TAG, `【添加5个Runnable】执行成功 i=${i} result=${result}`)
                 })
                 .catch((e: Error) => {
-                  Log.e(TAG, `【添加10个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                  Log.e(TAG, `【添加5个Runnable】执行异常 i=${i} e=${JSON.stringify(e)}`)
                 })
                 .finally(() => {
-                  Log.i(TAG, `【添加10个Runnable】执行结束 i=${i}`)
+                  Log.i(TAG, `【添加5个Runnable】执行结束 i=${i}`)
                 })
             }
           }).margin(5)
@@ -212,21 +214,22 @@ export struct ImmediatelyComponent {
             task?.cancel()
           }).margin(5)
 
-        Button(`添加10个Message`)
+        Button(`添加5个Message`)
           .onClick(async () => {
-            for (let i = 0; i < 10; ++i) {
-              (this.immediatelyQueue.sendMessage({
+            for (let i = 0; i < 5; ++i) {
+              const tempTask = this.immediatelyQueue.sendMessage({
                 what: `say_hello`,
                 data: { name: '江澎涌', age: 20 + i },
-              })).getResult()
+              })
+              tempTask.getResult()
                 .then((result) => {
-                  Log.i(TAG, `【添加10个Message】执行成功 i=${i} result=${result}`)
+                  Log.i(TAG, `【添加5个Message】执行成功 i=${i} result=${result}`)
                 })
                 .catch((e: Error) => {
-                  Log.e(TAG, `【添加10个Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                  Log.e(TAG, `【添加5个Message】执行异常 i=${i} e=${JSON.stringify(e)}`)
                 })
                 .finally(() => {
-                  Log.i(TAG, `【添加10个Message】执行结束i=${i}`)
+                  Log.i(TAG, `【添加5个Message】执行结束i=${i}`)
                 })
             }
           }).margin(5)
@@ -234,7 +237,7 @@ export struct ImmediatelyComponent {
         Button(`移除Message`)
           .onClick(async () => {
             let task: Task | undefined
-            for (let i = 0; i < 10; ++i) {
+            for (let i = 0; i < 5; ++i) {
               const tempTask = this.immediatelyQueue.sendMessage({
                 what: `remove_message`,
                 data: { name: 'jiang peng yong', age: 10 + i },
@@ -246,7 +249,7 @@ export struct ImmediatelyComponent {
               }).finally(() => {
                 Log.i(TAG, `【移除Message】执行完成 i=${i}`)
               })
-              if (i == 5) {
+              if (i == 1) {
                 task = tempTask
               }
             }
@@ -256,7 +259,7 @@ export struct ImmediatelyComponent {
 
         Button(`添加10个Message和Runnable`)
           .onClick(async () => {
-            for (let i = 0; i < 20; ++i) {
+            for (let i = 0; i < 10; ++i) {
               let task: Task
               if (i % 2 == 0) {
                 task = this.immediatelyQueue.post(async () => {
@@ -268,10 +271,10 @@ export struct ImmediatelyComponent {
                   Log.i(TAG, `【添加10个Message和Runnable】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
                   await this.delay(delayTime2)
 
-                  if (i == 5) {
+                  if (i / 2 == 3) {
                     throw { message: "模拟异常" } as Error
                   }
-                  return `jiangpengyong-添加10个Message和Runnable ${i}`
+                  return `小朋友-添加10个Message和Runnable ${i}`
                 })
               } else {
                 task = this.immediatelyQueue.sendMessage({
@@ -290,6 +293,34 @@ export struct ImmediatelyComponent {
                   Log.i(TAG, `【添加10个Message和Runnable】执行结束 i=${i}`)
                 })
             }
+          }).margin(5)
+
+        Button(`清空队列`)
+          .onClick(async () => {
+            for (let i = 0; i < 5; ++i) {
+              const task = this.immediatelyQueue.post(async () => {
+                const delayTime1 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【清空队列】执行逻辑 i=${i} 第一段 将会模拟耗时=${delayTime1}`)
+                await this.delay(delayTime1)
+
+                const delayTime2 = Math.round(Math.random() * 500)
+                Log.i(TAG, `【清空队列】执行逻辑 i=${i} 第二段 将会模拟耗时=${delayTime2}`)
+                await this.delay(delayTime2)
+
+                return `小朋友-清空队列 ${i}`
+              })
+              task.getResult()
+                .then((result) => {
+                  Log.i(TAG, `【清空队列】执行成功 i=${i} result=${result}`)
+                })
+                .catch((e: Error) => {
+                  Log.e(TAG, `【清空队列】执行异常 i=${i} e=${JSON.stringify(e)}`)
+                })
+                .finally(() => {
+                  Log.i(TAG, `【清空队列】执行结束 i=${i}`)
+                })
+            }
+            this.immediatelyQueue.clear()
           }).margin(5)
 
       }.backgroundColor(`#FFBDBD`)
