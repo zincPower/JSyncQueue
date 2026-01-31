@@ -10,7 +10,7 @@ JSyncQueue 是一个开箱即用的鸿蒙异步任务同步队列。
 
 - **保证顺序执行**：所有任务严格按照入队顺序执行，即使任务内部有异步操作也能保证顺序
 - **两种执行模式**：支持 "立即执行" 和 "延时执行" 两种模式，可以满足不同场景需求
-- **两种任务类型**：支持向同步队列添加 "Message 消息类型" 和 "Runnable 闭包类型"
+- **两种任务类型**：支持向同步队列添加 "Message 类型任务" 和 "Runnable 类型任务"
 - **任务取消和管理**：可随时取消指定任务或清空整个队列
 - **获取任务结果**：通过任务的 `getResult()` 获取执行结果
 
@@ -37,7 +37,7 @@ ohpm install jsyncqueue
   "author": "",
   "license": "",
   "dependencies": {
-    "jsyncqueue": "1.0.0" // 添加这一行，版本记得改为需要的版本
+    "jsyncqueue": "1.0.0" // 添加这一行，请根据需要修改版本号
   }
 }
 ```
@@ -87,7 +87,7 @@ interface Message {
 
 ### 3-3、Task 接口
 
-所有添加的任务，包括“Message 消息类型”和“Runnable 闭包类型”，均会返回该类型实例，通过该实例可以“取消任务”、“获取任务结果”、“任务 Id”。
+所有添加的任务，包括“Message 类型任务”和“Runnable 类型任务”，均会返回该类型实例，通过该实例可以“取消任务”、“获取任务结果”、“任务 Id”。
 
 ```typescript
 interface Task {
@@ -135,7 +135,7 @@ interface JSyncQueueException {
 
 **值得注意：**
 
-- 进入队列的 “立即执行任务” 会**保证入队顺序，按顺序执行**
+- **立即执行任务会严格按入队顺序执行**
 - 任务结果的接收处理（即对 `Task.getResult()` 的处理）和 `JSyncQueue` 对任务的处理是**不保证顺序**的，因为 `Task.getResult()` 的处理已不在队列范围内
 
 ```typescript
@@ -251,7 +251,7 @@ task?.cancel()
 
 **延时执行 Runnable 类型任务**
 
-添加延时任务只是调用的方法不同和需要传入延时参数，即调用 `postDelay` 方法和传入一个 number 类型的参数。
+添加延时任务只需改用 `postDelay` 方法并传入延时参数
 
 - 下面代码记录了添加任务到真正执行的延时，通过 `realDelay` 参数可以查看
 - 使用了 `delay` 函数模拟了两次耗时操作，并模拟返回了处理结果
@@ -329,7 +329,7 @@ for (let i = 0; i < 5; ++i) {
 具体操作如下：
 
 - 定义一个 `ImmediatelyQueue` 类继承 `JSyncQueue` ，实现 `onHandleMessage` 方法
-- 创建一个 `ImmediatelyQueue` 实例，并通过这个实例进行发送 Message 消息，同步队列会按入队顺序一个个进行分发给该实例的 `onHandleMessge` 方法进行处理
+- 创建一个 `ImmediatelyQueue` 实例，并通过这个实例进行发送 Message 消息，同步队列会按入队顺序一个个进行分发给该实例的 `onHandleMessage` 方法进行处理
 
 ```typescript
 // 自定义 JSyncQueue
@@ -454,16 +454,16 @@ export class DelayQueue extends JSyncQueue {
   async onHandleMessage(message: Message): Promise<Any> {
     Log.i("DelayQueue", `onHandleMessage message=${JSON.stringify(message)}`)
     switch (message.what) {
-      case "remove_message": {
+      case "say_hello": {
         const name = message.data["name"]
         this.count += 1
 
         const delayTime1 = Math.round(Math.random() * 500)
-        Log.i("DelayQueue", `【remove_message】执行逻辑 第一段 将会模拟耗时=${delayTime1}`)
+        Log.i("DelayQueue", `【say_hello】执行逻辑 第一段 将会模拟耗时=${delayTime1}`)
         await this.delay(delayTime1)
 
         const delayTime2 = Math.round(Math.random() * 500)
-        Log.i("DelayQueue", `【remove_message】执行逻辑 第二段 将会模拟耗时=${delayTime2}`)
+        Log.i("DelayQueue", `【say_hello】执行逻辑 第二段 将会模拟耗时=${delayTime2}`)
         await this.delay(delayTime2)
 
         if (this.count % 10 == 5) {
